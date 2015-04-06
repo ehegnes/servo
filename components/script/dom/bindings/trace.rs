@@ -322,6 +322,7 @@ impl RootedCollectionSet {
             let type_ = VecRootableType::tag(None::<T>);
             let mut collections = collections.borrow_mut();
             assert!(collections.set[type_ as usize].remove(&(collection as *const _ as *const _)));
+            //collections.set[type_ as usize].remove(&(collection as *const _ as *const _));
         });
     }
 
@@ -394,7 +395,13 @@ impl<T: VecRootableType> RootedVec<T> {
         }
         RootedVec::<T> { v: vec!() }
     }
-
+    /// Documentation
+    pub fn newconstructor(arg: *const u8) -> RootedVec<T> {
+        unsafe {
+            RootedCollectionSet::add::<T>(&*(arg as *const _));
+        }
+        RootedVec::<T> { v: vec!() }
+    }
 }
 
 #[unsafe_destructor]
