@@ -49,15 +49,13 @@
 //! - `RootedReference`: makes obtaining an `Option<JSRef<T>>` from an
 //!   `Option<Root<T>>` easy
 
-use dom::bindings::trace::JSTraceable;
+use dom::bindings::trace::{JSTraceable, RootedVec};
 use dom::bindings::utils::{Reflector, Reflectable};
 use dom::node::Node;
 use js::jsapi::JSObject;
 use js::jsval::JSVal;
 use layout_interface::TrustedNodeAddress;
 use script_task::STACK_ROOTS;
-
-use util::smallvec::{SmallVec, SmallVec32};
 
 use core::nonzero::NonZero;
 use std::cell::{Cell, UnsafeCell};
@@ -610,7 +608,7 @@ impl<T: Assignable<U>, U: Reflectable> TemporaryPushable<T> for Vec<JS<U>> {
 /// See also [*Exact Stack Rooting - Storing a GCPointer on the CStack*]
 /// (https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Internals/GC/Exact_Stack_Rooting).
 pub struct RootCollection {
-    roots: UnsafeCell<SmallVec32<*mut JSObject>>,
+    roots: UnsafeCell<RootedVec<*mut JSObject>>,
 }
 
 /// A pointer to a RootCollection, for use in global variables.
@@ -622,7 +620,7 @@ impl RootCollection {
     /// Create an empty collection of roots
     pub fn new() -> RootCollection {
         RootCollection {
-            roots: UnsafeCell::new(SmallVec32::new()),
+            roots: UnsafeCell::new(RootedVec::new()),
         }
     }
 
@@ -632,7 +630,7 @@ impl RootCollection {
             let roots = self.roots.get();
             (*roots).push(untracked_js_ptr);
             debug!("  rooting {:?}", untracked_js_ptr);
-            assert!(!(*roots).spilled());
+            //assert!(!(*roots).spilled());
         }
     }
 

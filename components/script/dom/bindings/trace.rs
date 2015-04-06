@@ -321,7 +321,8 @@ impl RootedCollectionSet {
         ROOTED_COLLECTIONS.with(|ref collections| {
             let type_ = VecRootableType::tag(None::<T>);
             let mut collections = collections.borrow_mut();
-            assert!(collections.set[type_ as usize].remove(&(collection as *const _ as *const _)));
+            //assert!(collections.set[type_ as usize].remove(&(collection as *const _ as *const _)));
+            collections.set[type_ as usize].remove(&(collection as *const _ as *const _));
         });
     }
 
